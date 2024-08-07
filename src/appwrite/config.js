@@ -15,8 +15,15 @@ export class Service {
     this.bucket = new Storage(this.client);
   }
 
+  validateContent(content) {
+    return typeof content === "string" && content.length <= 255;
+  }
+
   async createPost({ title, slug, content, featuredimage, status, userID }) {
     try {
+      if (!this.validateContent(content)) {
+        throw new Error("Invalid content length");
+      }
       return await this.databases.createDocument(
         conf.appwriteDatabaseId,
         conf.appwriteCollectionId,
